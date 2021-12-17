@@ -2,7 +2,6 @@ import os
 import math
 import torch
 import torch.nn as nn
-from model.common import DownBlock
 import model.drn
 
 
@@ -32,20 +31,14 @@ class Model(nn.Module):
         self.n_GPUs = opt.n_GPUs
 
         self.model = drn.make_model(opt).to(self.device)
-        self.dual_models = []
-        for _ in self.opt.scale:
-            dual_model = DownBlock(opt, 2).to(self.device)
-            self.dual_models.append(dual_model)
         
         if not opt.cpu and opt.n_GPUs > 1:
             self.model = nn.DataParallel(self.model, range(opt.n_GPUs))
-            self.dual_models = dataparallel(self.dual_models, range(opt.n_GPUs))
 
-        self.load(opt.pre_train, opt.pre_train_dual, cpu=opt.cpu)
+        self.load(opt.pre_train, cpu=opt.cpu)
 
         if not opt.test_only:
             print(self.model, file=ckp.log_file)
-            print(self.dual_models, file=ckp.log_file)
         
         # compute parameter
         num_parameter = self.count_parameters(self.model)
@@ -63,12 +56,6 @@ class Model(nn.Module):
             return self.model
         else:
             return self.model.module
-    
-    def get_dual_model(self, idx):
-        if self.n_GPUs == 1:
-            return self.dual_models[idx]
-        else:
-            return self.dual_models[idx].module
 
     def state_dict(self, **kwargs):
         target = self.get_model()
@@ -90,21 +77,8 @@ class Model(nn.Module):
                 target.state_dict(),
                 os.path.join(path, 'model', 'model_best.pt')
             )
-        #### save dual models ####
-        dual_models = []
-        for i in range(len(self.dual_models)):
-            dual_models.append(self.get_dual_model(i).state_dict())
-        torch.save(
-            dual_models,
-            os.path.join(path, 'model', 'dual_model_latest.pt')
-        )
-        if is_best:
-            torch.save(
-                dual_models,
-                os.path.join(path, 'model', 'dual_model_best.pt')
-            )
 
-    def load(self, pre_train='.', pre_train_dual='.', cpu=False):
+    def load(self, pre_train='.', cpu=False):
         if cpu:
             kwargs = {'map_location': lambda storage, loc: storage}
         else:
@@ -116,11 +90,4 @@ class Model(nn.Module):
                 torch.load(pre_train, **kwargs),
                 strict=False
             )
-        #### load dual model ####
-        if pre_train_dual != '.':
-            print('Loading dual model from {}'.format(pre_train_dual))
-            dual_models = torch.load(pre_train_dual, **kwargs)
-            for i in range(len(self.dual_models)):
-                self.get_dual_model(i).load_state_dict(
-                    dual_models[i], strict=False
-                )
+   

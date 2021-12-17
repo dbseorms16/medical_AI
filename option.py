@@ -4,7 +4,7 @@ import numpy as np
 
 parser = argparse.ArgumentParser(description='DRN')
 
-parser.add_argument('--n_threads', type=int, default=6,
+parser.add_argument('--n_threads', type=int, default=0,
                     help='number of threads for data loading')
 parser.add_argument('--cpu', action='store_true',
                     help='use cpu only')
@@ -69,8 +69,6 @@ parser.add_argument('--save_results', action='store_true',
                     help='save output results')
 
 args = parser.parse_args()
-
-utility.init_model(args)
 
 # scale = [2,4] for 4x SR to load data
 # scale = [2,4,8] for 8x SR to load data

@@ -19,7 +19,6 @@ class Trainer():
 
     def train(self):
         epoch = self.scheduler.last_epoch + 1
-        lr = self.scheduler.get_lr()[0]
 
         self.ckp.write_log(
             '[Epoch {}]\tLearning rate: {:.2e}'.format(epoch, Decimal(lr))
@@ -27,20 +26,18 @@ class Trainer():
         self.loss.start_log()
         self.model.train()
         timer_data, timer_model = utility.timer(), utility.timer()
-        for batch, (lr, hr, _) in enumerate(self.loader_train):
-            lr, hr = self.prepare(lr, hr)
+        for batch, (hr, _) in enumerate(self.loader_train):
+            hr = self.prepare(hr)
             timer_data.hold()
             timer_model.tic()
             
             self.optimizer.zero_grad()
 
             # forward
-            sr = self.model(lr[0])
+            sr = self.model(hr)
 
             # compute primary loss
             loss_primary = self.loss(sr[-1], hr)
-            for i in range(1, len(sr)):
-                loss_primary += self.loss(sr[i - 1 - len(sr)], lr[i - len(sr)])
 
             # compute total loss
             loss = loss_primary 
@@ -81,15 +78,13 @@ class Trainer():
             for si, s in enumerate([scale]):
                 eval_psnr = 0
                 tqdm_test = tqdm(self.loader_test, ncols=80)
-                for _, (lr, hr, filename) in enumerate(tqdm_test):
+                for _, (hr, filename) in enumerate(tqdm_test):
                     filename = filename[0]
                     no_eval = (hr.nelement() == 1)
-                    if not no_eval:
-                        lr, hr = self.prepare(lr, hr)
-                    else:
-                        lr, = self.prepare(lr)
 
-                    sr = self.model(lr[0])
+                    hr = self.prepare(hr)
+
+                    sr = self.model(hr)
                     if isinstance(sr, list): sr = sr[-1]
 
                     sr = utility.quantize(sr, self.opt.rgb_range)

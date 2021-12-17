@@ -4,6 +4,7 @@ from data import common
 import numpy as np
 import imageio
 import torch.utils.data as data
+import SimpleITK as sitk
 
 
 class SRData(data.Dataset):
@@ -22,23 +23,23 @@ class SRData(data.Dataset):
         self._set_dataset_length()
     
     def __getitem__(self, idx):
-        lr, hr, filename = self._load_file(idx)
+        hr, filename = self._load_file(idx)
 
-        lr, hr = self.get_patch(lr, hr)
-        lr, hr = common.set_channel(lr, hr, n_channels=self.args.n_colors)
+        hr = self.get_patch(hr)
+        hr = common.set_channel(hr, n_channels=self.args.n_colors)
         
-        lr_tensor, hr_tensor = common.np2Tensor(
-            lr, hr, rgb_range=self.args.rgb_range
+        hr_tensor = common.np2Tensor(
+            hr, rgb_range=self.args.rgb_range
         )
 
-        return lr_tensor, hr_tensor, filename
+        return hr_tensor, filename
 
     def __len__(self):
         return self.dataset_length
 
     def _get_imgs_path(self, args):
-        list_hr, list_lr = self._scan()
-        self.images_hr, self.images_lr = list_hr, list_lr
+        list_hr = self._scan()
+        self.images_hr = list_hr
 
     def _set_dataset_length(self):
         if self.train:
@@ -50,24 +51,13 @@ class SRData(data.Dataset):
 
     def _scan(self):
         names_hr = sorted(
-            glob.glob(os.path.join(self.dir_hr, '*' + self.ext[0]))
+            glob.glob(os.path.join(self.dir_hr, '*/T1wCE/'))
         )
-        names_lr = [[] for _ in self.scale]
-        for f in names_hr:
-            filename, _ = os.path.splitext(os.path.basename(f))
-            for si, s in enumerate(self.scale):
-                names_lr[si].append(os.path.join(
-                    self.dir_lr, 'X{}/{}x{}{}'.format(
-                        s, filename, s, self.ext[1]
-                    )
-                ))
-
-        return names_hr, names_lr
+        return names_hr
 
     def _set_filesystem(self, data_dir):
         self.apath = os.path.join(data_dir, self.name)
         self.dir_hr = os.path.join(self.apath, 'HR')
-        self.dir_lr = os.path.join(self.apath, 'LR_bicubic')
         self.ext = ('.png', '.png')
 
     def _get_index(self, idx):
@@ -82,32 +72,53 @@ class SRData(data.Dataset):
     def _load_file(self, idx):
         idx = self._get_index(idx)
         f_hr = self.images_hr[idx]
-        f_lr = [self.images_lr[idx_scale][idx] for idx_scale in range(len(self.scale))]
-
         filename, _ = os.path.splitext(os.path.basename(f_hr))
-        hr = imageio.imread(f_hr)
-        lr = [imageio.imread(f_lr[idx_scale]) for idx_scale in range(len(self.scale))]
-        return lr, hr, filename
 
-    def get_patch(self, lr, hr):
+        reader = sitk.ImageSeriesReader()
+        dicom_files = reader.GetGDCMSeriesFileNames(f_hr)
+        reader.SetFileNames(dicom_files)
+        input_volume = reader.Execute()
+
+        original_spacing = input_volume.GetSpacing()
+        original_size = input_volume.GetSize()
+
+        # out_spacing = [1, 1, 1]
+        # out_size = [
+        #     int(np.round(original_size[0] * (original_spacing[0] / out_spacing[0]))),
+        #     int(np.round(original_size[1] * (original_spacing[1] / out_spacing[1]))),
+        #     int(np.round(original_size[2] * (original_spacing[2] / out_spacing[2])))]
+
+        # resample = sitk.ResampleImageFilter()
+        # resample.SetOutputSpacing(out_spacing)
+        # resample.SetSize(out_size)
+        # resample.SetOutputDirection(input_volume.GetDirection())
+        # resample.SetOutputOrigin(input_volume.GetOrigin())
+        # resample.SetTransform(sitk.Transform())
+        # resample.SetDefaultPixelValue(input_volume.GetPixelIDValue())
+
+        # input_volume = resample.Execute(input_volume)
+
+        image_array = sitk.GetArrayFromImage(input_volume)
+        sitk.WriteImage(image_array, 'image_slice.png')
+
+        # image_slices_array = image_array[int(np.shape(image_array)[0]):int(np.shape(image_array)[0]),:,:]
+        # print(image_array)
+        print(image_array.shape)
+        # print(image_slices_array)
+        return image_array, filename
+
+    def get_patch(self, hr):
         scale = self.scale
-        multi_scale = len(self.scale) > 1
-        if self.train:
-            lr, hr = common.get_patch(
-                lr,
-                hr,
-                patch_size=self.args.patch_size,
-                scale=scale,
-                multi_scale=multi_scale
-            )
-            if not self.args.no_augment:
-                lr, hr = common.augment(lr, hr)
-        else:
-            if isinstance(lr, list):
-                ih, iw = lr[0].shape[:2]
-            else:
-                ih, iw = lr.shape[:2]
-            hr = hr[0:ih * scale[0], 0:iw * scale[0]]
+        # multi_scale = len(self.scale) > 1
+        # if self.train:
+        #     if not self.args.no_augment:
+        #         lr, hr = common.augment(lr, hr)
+        # else:
+        #     if isinstance(lr, list):
+        #         ih, iw = lr[0].shape[:2]
+        #     else:
+        #         ih, iw = lr.shape[:2]
+        #     hr = hr[0:ih * scale[0], 0:iw * scale[0]]
             
-        return lr, hr
+        return hr
 

@@ -34,7 +34,7 @@ def set_channel(*args, n_channels=3):
 
         return img
 
-    return [_set_channel(a) for a in args[0]], _set_channel(args[-1])
+    return _set_channel(args[-1])
 
 
 def np2Tensor(*args, rgb_range=255):
@@ -45,7 +45,7 @@ def np2Tensor(*args, rgb_range=255):
 
         return tensor
 
-    return [_np2Tensor(a) for a in args[0]], _np2Tensor(args[1])
+    return _np2Tensor(args[0])
 
 
 def augment(*args, hflip=True, rot=True):
