@@ -30,7 +30,7 @@ parser.add_argument('--n_colors', type=int, default=3,
                     help='number of color channels to use')
 parser.add_argument('--no_augment', action='store_true',
                     help='do not use data augmentation')
-parser.add_argument('--model', help='model name: DRN-S | DRN-L', required=True)
+parser.add_argument('--model', help='model name: DRN-S | DRN-L', default='DRN-S')
 parser.add_argument('--pre_train', type=str, default='.',
                     help='pre-trained model directory')
 parser.add_argument('--negval', type=float, default=0.2, 

@@ -1,1 +1,6 @@
-python main.py --data_dir ./ --save ../experiments --scale 4 --model DRN-S --test_only --save_results
+학습
+python main.py --data_dir ./ --save ../experiments --save_results
+
+테스트
+
+python main.py --data_dir ./ --save ../experiments --save_results --test_only
