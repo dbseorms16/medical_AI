@@ -75,10 +75,12 @@ class SRData(data.Dataset):
     def _load_file(self, idx):
         idx = self._get_index(idx)
         f_hr = self.images_hr[idx]
+        # 이미지 전처리하는 부분
         hr_imges = sorted(glob.glob(f_hr+'/*.png'), key=lambda x : int(x.split('-')[1].split('.')[0]))
-
+        
         index = len(hr_imges) // 2 - ( len(hr_imges) / 10 )
 
+        #여러장
         hr = [imageio.imread(hr_imges[( int(index) * i )]) for i in range(3)]
 
 
