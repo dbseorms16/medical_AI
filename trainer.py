@@ -22,7 +22,7 @@ class Trainer():
         self.optimizer = utility.make_optimizer(opt, self.model)
         self.scheduler = utility.make_scheduler(opt, self.optimizer)
         self.error_last = 1e8
-        self.epoch = 1
+        self.epoch = 0
 
 
     def loadLabel(self, filenames ):

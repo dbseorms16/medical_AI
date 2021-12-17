@@ -1,0 +1,315 @@
+2021-12-17-16:47:51
+
+n_threads: 0
+cpu: False
+n_GPUs: 1
+seed: 1
+data_dir: ./
+data_train: brain
+data_test: test
+data_range: 1-800/801-810
+scale: [2, 4]
+patch_size: 384
+rgb_range: 255
+n_colors: 3
+no_augment: False
+model: DRN-S
+pre_train: .
+negval: 0.2
+test_every: 100
+epochs: 1000
+batch_size: 2
+self_ensemble: False
+test_only: True
+lr: 0.0001
+eta_min: 1e-07
+beta1: 0.9
+beta2: 0.999
+epsilon: 1e-08
+weight_decay: 0
+loss: 1*L1
+skip_threshold: 1000000.0
+save: ./experiments
+print_every: 10
+save_results: True
+
+2021-12-17-16:47:55
+
+n_threads: 0
+cpu: False
+n_GPUs: 1
+seed: 1
+data_dir: ./
+data_train: brain
+data_test: test
+data_range: 1-800/801-810
+scale: [2, 4]
+patch_size: 384
+rgb_range: 255
+n_colors: 3
+no_augment: False
+model: DRN-S
+pre_train: .
+negval: 0.2
+test_every: 100
+epochs: 1000
+batch_size: 2
+self_ensemble: False
+test_only: True
+lr: 0.0001
+eta_min: 1e-07
+beta1: 0.9
+beta2: 0.999
+epsilon: 1e-08
+weight_decay: 0
+loss: 1*L1
+skip_threshold: 1000000.0
+save: ./experiments
+print_every: 10
+save_results: True
+
+2021-12-17-16:48:07
+
+n_threads: 0
+cpu: False
+n_GPUs: 1
+seed: 1
+data_dir: ./
+data_train: brain
+data_test: test
+data_range: 1-800/801-810
+scale: [2, 4]
+patch_size: 384
+rgb_range: 255
+n_colors: 3
+no_augment: False
+model: DRN-S
+pre_train: .
+negval: 0.2
+test_every: 100
+epochs: 1000
+batch_size: 2
+self_ensemble: False
+test_only: False
+lr: 0.0001
+eta_min: 1e-07
+beta1: 0.9
+beta2: 0.999
+epsilon: 1e-08
+weight_decay: 0
+loss: 1*L1
+skip_threshold: 1000000.0
+save: ./experiments
+print_every: 10
+save_results: True
+
+2021-12-17-16:48:18
+
+n_threads: 0
+cpu: False
+n_GPUs: 1
+seed: 1
+data_dir: ./
+data_train: brain
+data_test: test
+data_range: 1-800/801-810
+scale: [2, 4]
+patch_size: 384
+rgb_range: 255
+n_colors: 3
+no_augment: False
+model: DRN-S
+pre_train: .
+negval: 0.2
+test_every: 100
+epochs: 1000
+batch_size: 2
+self_ensemble: False
+test_only: False
+lr: 0.0001
+eta_min: 1e-07
+beta1: 0.9
+beta2: 0.999
+epsilon: 1e-08
+weight_decay: 0
+loss: 1*L1
+skip_threshold: 1000000.0
+save: ./experiments
+print_every: 10
+save_results: True
+
+2021-12-17-16:50:11
+
+n_threads: 0
+cpu: False
+n_GPUs: 1
+seed: 1
+data_dir: ./
+data_train: brain
+data_test: test
+data_range: 1-800/801-810
+scale: [2, 4]
+patch_size: 384
+rgb_range: 255
+n_colors: 3
+no_augment: False
+model: DRN-S
+pre_train: .
+negval: 0.2
+test_every: 100
+epochs: 1000
+batch_size: 2
+self_ensemble: False
+test_only: False
+lr: 0.0001
+eta_min: 1e-07
+beta1: 0.9
+beta2: 0.999
+epsilon: 1e-08
+weight_decay: 0
+loss: 1*L1
+skip_threshold: 1000000.0
+save: ./experiments
+print_every: 10
+save_results: True
+
+2021-12-17-16:50:22
+
+n_threads: 0
+cpu: False
+n_GPUs: 1
+seed: 1
+data_dir: ./
+data_train: brain
+data_test: test
+data_range: 1-800/801-810
+scale: [2, 4]
+patch_size: 384
+rgb_range: 255
+n_colors: 3
+no_augment: False
+model: DRN-S
+pre_train: .
+negval: 0.2
+test_every: 100
+epochs: 1000
+batch_size: 2
+self_ensemble: False
+test_only: False
+lr: 0.0001
+eta_min: 1e-07
+beta1: 0.9
+beta2: 0.999
+epsilon: 1e-08
+weight_decay: 0
+loss: 1*L1
+skip_threshold: 1000000.0
+save: ./experiments
+print_every: 10
+save_results: True
+
+2021-12-17-16:50:42
+
+n_threads: 0
+cpu: False
+n_GPUs: 1
+seed: 1
+data_dir: ./
+data_train: brain
+data_test: test
+data_range: 1-800/801-810
+scale: [2, 4]
+patch_size: 384
+rgb_range: 255
+n_colors: 3
+no_augment: False
+model: DRN-S
+pre_train: .
+negval: 0.2
+test_every: 100
+epochs: 1000
+batch_size: 2
+self_ensemble: False
+test_only: False
+lr: 0.0001
+eta_min: 1e-07
+beta1: 0.9
+beta2: 0.999
+epsilon: 1e-08
+weight_decay: 0
+loss: 1*L1
+skip_threshold: 1000000.0
+save: ./experiments
+print_every: 10
+save_results: True
+
+2021-12-17-16:50:59
+
+n_threads: 0
+cpu: False
+n_GPUs: 1
+seed: 1
+data_dir: ./
+data_train: brain
+data_test: test
+data_range: 1-800/801-810
+scale: [2, 4]
+patch_size: 384
+rgb_range: 255
+n_colors: 3
+no_augment: False
+model: DRN-S
+pre_train: .
+negval: 0.2
+test_every: 100
+epochs: 1000
+batch_size: 2
+self_ensemble: False
+test_only: False
+lr: 0.0001
+eta_min: 1e-07
+beta1: 0.9
+beta2: 0.999
+epsilon: 1e-08
+weight_decay: 0
+loss: 1*L1
+skip_threshold: 1000000.0
+save: ./experiments
+print_every: 10
+save_results: True
+
+2021-12-17-16:51:10
+
+n_threads: 0
+cpu: False
+n_GPUs: 1
+seed: 1
+data_dir: ./
+data_train: brain
+data_test: test
+data_range: 1-800/801-810
+scale: [2, 4]
+patch_size: 384
+rgb_range: 255
+n_colors: 3
+no_augment: False
+model: DRN-S
+pre_train: .
+negval: 0.2
+test_every: 100
+epochs: 1000
+batch_size: 2
+self_ensemble: False
+test_only: False
+lr: 0.0001
+eta_min: 1e-07
+beta1: 0.9
+beta2: 0.999
+epsilon: 1e-08
+weight_decay: 0
+loss: 1*L1
+skip_threshold: 1000000.0
+save: ./experiments
+print_every: 10
+save_results: True
+
