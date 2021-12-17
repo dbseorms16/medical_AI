@@ -5,7 +5,7 @@ import numpy as np
 import imageio
 import torch.utils.data as data
 import SimpleITK as sitk
-
+import torch
 
 class SRData(data.Dataset):
     def __init__(self, args, name='', train=True, benchmark=False):
@@ -25,12 +25,13 @@ class SRData(data.Dataset):
     def __getitem__(self, idx):
         hr, filename = self._load_file(idx)
 
-        hr = self.get_patch(hr)
-        hr = common.set_channel(hr, n_channels=self.args.n_colors)
+        # hr = self.get_patch(hr)
+        # hr = common.set_channel(hr, n_channels=self.args.n_colors)
+        hr_tensor = torch.from_numpy(hr).float()
         
-        hr_tensor = common.np2Tensor(
-            hr, rgb_range=self.args.rgb_range
-        )
+        # hr_tensor = common.np2Tensor(
+        #     hr, rgb_range=self.args.rgb_range
+        # )
 
         return hr_tensor, filename
 
@@ -51,7 +52,7 @@ class SRData(data.Dataset):
 
     def _scan(self):
         names_hr = sorted(
-            glob.glob(os.path.join(self.dir_hr, '*/T1wCE/'))
+            glob.glob(os.path.join(self.dir_hr, '*/T1wCE'))
         )
         return names_hr
 
@@ -72,40 +73,15 @@ class SRData(data.Dataset):
     def _load_file(self, idx):
         idx = self._get_index(idx)
         f_hr = self.images_hr[idx]
+
+        hr_imges = sorted(glob.glob(f_hr+'/*.png'), key=lambda x : int(x.split('-')[1].split('.')[0]))
+
+        mid_i = len(hr_imges) // 2 - 20
+
+        hr = [imageio.imread(hr_imges[i * 10 - mid_i]) for i in range(5)]
+        hr = np.array(hr)
         filename, _ = os.path.splitext(os.path.basename(f_hr))
-
-        reader = sitk.ImageSeriesReader()
-        dicom_files = reader.GetGDCMSeriesFileNames(f_hr)
-        reader.SetFileNames(dicom_files)
-        input_volume = reader.Execute()
-
-        original_spacing = input_volume.GetSpacing()
-        original_size = input_volume.GetSize()
-
-        # out_spacing = [1, 1, 1]
-        # out_size = [
-        #     int(np.round(original_size[0] * (original_spacing[0] / out_spacing[0]))),
-        #     int(np.round(original_size[1] * (original_spacing[1] / out_spacing[1]))),
-        #     int(np.round(original_size[2] * (original_spacing[2] / out_spacing[2])))]
-
-        # resample = sitk.ResampleImageFilter()
-        # resample.SetOutputSpacing(out_spacing)
-        # resample.SetSize(out_size)
-        # resample.SetOutputDirection(input_volume.GetDirection())
-        # resample.SetOutputOrigin(input_volume.GetOrigin())
-        # resample.SetTransform(sitk.Transform())
-        # resample.SetDefaultPixelValue(input_volume.GetPixelIDValue())
-
-        # input_volume = resample.Execute(input_volume)
-
-        image_array = sitk.GetArrayFromImage(input_volume)
-        sitk.WriteImage(image_array, 'image_slice.png')
-
-        # image_slices_array = image_array[int(np.shape(image_array)[0]):int(np.shape(image_array)[0]),:,:]
-        # print(image_array)
-        print(image_array.shape)
-        # print(image_slices_array)
-        return image_array, filename
+        return hr, filename
 
     def get_patch(self, hr):
         scale = self.scale
