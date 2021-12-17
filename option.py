@@ -14,7 +14,7 @@ parser.add_argument('--seed', type=int, default=1,
                     help='random seed')
 parser.add_argument('--data_dir', type=str, default='data_path',
                     help='dataset directory')
-parser.add_argument('--data_train', type=str, default='DF2K',
+parser.add_argument('--data_train', type=str, default='brain',
                     help='train dataset name')
 parser.add_argument('--data_test', type=str, default='test',
                     help='test dataset name')
@@ -35,11 +35,11 @@ parser.add_argument('--pre_train', type=str, default='.',
                     help='pre-trained model directory')
 parser.add_argument('--negval', type=float, default=0.2, 
                     help='Negative value parameter for Leaky ReLU')
-parser.add_argument('--test_every', type=int, default=1000,
+parser.add_argument('--test_every', type=int, default=100,
                     help='do test per every N batches')
 parser.add_argument('--epochs', type=int, default=1000,
                     help='number of epochs to train')
-parser.add_argument('--batch_size', type=int, default=32,
+parser.add_argument('--batch_size', type=int, default=2,
                     help='input batch size for training')
 parser.add_argument('--self_ensemble', action='store_true',
                     help='use self-ensemble method for test')
@@ -63,7 +63,7 @@ parser.add_argument('--skip_threshold', type=float, default='1e6',
                     help='skipping batch that has large error')
 parser.add_argument('--save', type=str, default='./experiment/test/',
                     help='file name to save')
-parser.add_argument('--print_every', type=int, default=100,
+parser.add_argument('--print_every', type=int, default=10,
                     help='how many batches to wait before logging training status')
 parser.add_argument('--save_results', action='store_true',
                     help='save output results')

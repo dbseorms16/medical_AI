@@ -6,6 +6,7 @@ import imageio
 import torch.utils.data as data
 import SimpleITK as sitk
 import torch
+import torch.nn as nn
 
 class SRData(data.Dataset):
     def __init__(self, args, name='', train=True, benchmark=False):
@@ -28,7 +29,8 @@ class SRData(data.Dataset):
         # hr = self.get_patch(hr)
         # hr = common.set_channel(hr, n_channels=self.args.n_colors)
         hr_tensor = torch.from_numpy(hr).float()
-        
+        hr_tensor = nn.functional.interpolate(hr_tensor.unsqueeze(0), size=(256,256), mode='bicubic')[0]
+
         # hr_tensor = common.np2Tensor(
         #     hr, rgb_range=self.args.rgb_range
         # )
@@ -58,7 +60,7 @@ class SRData(data.Dataset):
 
     def _set_filesystem(self, data_dir):
         self.apath = os.path.join(data_dir, self.name)
-        self.dir_hr = os.path.join(self.apath, 'HR')
+        self.dir_hr = os.path.join(self.apath)
         self.ext = ('.png', '.png')
 
     def _get_index(self, idx):
@@ -73,15 +75,16 @@ class SRData(data.Dataset):
     def _load_file(self, idx):
         idx = self._get_index(idx)
         f_hr = self.images_hr[idx]
-
         hr_imges = sorted(glob.glob(f_hr+'/*.png'), key=lambda x : int(x.split('-')[1].split('.')[0]))
 
-        mid_i = len(hr_imges) // 2 - 20
+        index = len(hr_imges) // 2 - ( len(hr_imges) / 10 )
 
-        hr = [imageio.imread(hr_imges[i * 10 - mid_i]) for i in range(5)]
+        hr = [imageio.imread(hr_imges[( int(index) * i )]) for i in range(3)]
+
+
         hr = np.array(hr)
-        filename, _ = os.path.splitext(os.path.basename(f_hr))
-        return hr, filename
+
+        return hr, f_hr
 
     def get_patch(self, hr):
         scale = self.scale

@@ -36,10 +36,10 @@ class Checkpoint():
     def save(self, trainer, epoch, is_best=False):
         trainer.model.save(self.dir, is_best=is_best)
         trainer.loss.save(self.dir)
-        trainer.loss.plot_loss(self.dir, epoch)
+        # trainer.loss.plot_loss(self.dir, epoch)
 
-        self.plot_psnr(epoch)
-        torch.save(self.log, os.path.join(self.dir, 'psnr_log.pt'))
+        # self.plot_psnr(epoch)
+        # torch.save(self.log, os.path.join(self.dir, 'psnr_log.pt'))
         torch.save(
             trainer.optimizer.state_dict(),
             os.path.join(self.dir, 'optimizer.pt')
