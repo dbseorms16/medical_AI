@@ -41,7 +41,7 @@ class Trainer():
         )
         self.loss.start_log()
         self.model.train()
-        criterion = nn.BCEWithLogitsLoss()
+        # criterion = nn.BCEWithLogitsLoss()
         losses = 0
         # for p, n in self.model.named_parameters():
         #     print(n.requires_grad)
@@ -52,24 +52,30 @@ class Trainer():
             
             self.optimizer.zero_grad()
             gt = self.loadLabel(filename)
-            gt = nn.functional.one_hot(gt, num_classes=2).type(torch.float)
+            # gt = nn.functional.one_hot(gt, num_classes=2).type(torch.long)
             
             # forward
             result = self.model(hr.to('cuda:0'))
             # gt = torch.ones((16,2)).type(torch.float).to('cuda:0')
 
             # compute primary loss
-            loss = criterion(result, gt)
-
-
+            loss = self.loss(result, gt)
+            # if loss.item() < self.opt.skip_threshold * self.error_last:
+            #     loss.backward()                
+            #     self.optimizer.step()
+            # else:
+            #     print('Skip this batch {}! (Loss: {})'.format(
+            #         batch + 1, loss.item()
+                # ))
+                
             loss.backward()                
             self.optimizer.step()
-            self.optimizer.zero_grad()
+            # self.optimizer.zero_grad()
                 
             timer_model.hold()
             losses = loss
             if (batch + 1) % self.opt.print_every == 0:
-                self.ckp.write_log('[{}/{}]\t{}\t{:.1f}+{:.1f}s'.format(
+                self.ckp.write_log('[{}/{}]\t{:.4f}\t{:.1f}+{:.1f}s'.format(
                     (batch + 1) * self.opt.batch_size,
                     len(self.loader_train.dataset),
                     losses,

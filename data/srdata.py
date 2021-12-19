@@ -26,14 +26,8 @@ class SRData(data.Dataset):
     def __getitem__(self, idx):
         hr, filename = self._load_file(idx)
 
-        # hr = self.get_patch(hr)
-        # hr = common.set_channel(hr, n_channels=self.args.n_colors)
         hr_tensor = torch.from_numpy(hr).float()
-        hr_tensor = nn.functional.interpolate(hr_tensor.unsqueeze(0), size=(256,256), mode='bicubic')[0]
-
-        # hr_tensor = common.np2Tensor(
-        #     hr, rgb_range=self.args.rgb_range
-        # )
+        hr_tensor = nn.functional.interpolate(hr_tensor.unsqueeze(0), size=(256,256), mode='bicubic', align_corners=False)[0]
 
         return hr_tensor, filename
 
@@ -75,31 +69,11 @@ class SRData(data.Dataset):
     def _load_file(self, idx):
         idx = self._get_index(idx)
         f_hr = self.images_hr[idx]
-        # 이미지 전처리하는 부분
         hr_imges = sorted(glob.glob(f_hr+'/*.png'), key=lambda x : int(x.split('-')[1].split('.')[0]))
-        
-        index = len(hr_imges) // 2 - ( len(hr_imges) / 10 )
-
-        #여러장
-        hr = [imageio.imread(hr_imges[( int(index) * i )]) for i in range(3)]
+        index = len(hr_imges) // 6
+        hr = [imageio.imread(hr_imges[( int(index) * i )]) for i in range(5)]
 
 
         hr = np.array(hr)
 
         return hr, f_hr
-
-    def get_patch(self, hr):
-        scale = self.scale
-        # multi_scale = len(self.scale) > 1
-        # if self.train:
-        #     if not self.args.no_augment:
-        #         lr, hr = common.augment(lr, hr)
-        # else:
-        #     if isinstance(lr, list):
-        #         ih, iw = lr[0].shape[:2]
-        #     else:
-        #         ih, iw = lr.shape[:2]
-        #     hr = hr[0:ih * scale[0], 0:iw * scale[0]]
-            
-        return hr
-

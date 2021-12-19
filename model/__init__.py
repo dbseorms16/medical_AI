@@ -2,7 +2,7 @@ import os
 import math
 import torch
 import torch.nn as nn
-import model.drn
+import model.model_cls
 
 
 def dataparallel(model, gpu_list):
@@ -30,7 +30,7 @@ class Model(nn.Module):
         self.device = torch.device('cpu' if opt.cpu else 'cuda')
         self.n_GPUs = opt.n_GPUs
 
-        self.model = drn.make_model(opt).to(self.device)
+        self.model = model_cls.make_model(opt).to(self.device)
         
         if not opt.cpu and opt.n_GPUs > 1:
             self.model = nn.DataParallel(self.model, range(opt.n_GPUs))

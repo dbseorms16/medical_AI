@@ -37,7 +37,7 @@ class Loss(nn.modules.loss._Loss):
 
     def forward(self, result, gt):
         
-        verb_loss = self.verb_criterion(result, gt.type(torch.LongTensor).to('cuda:0'))
+        verb_loss = self.verb_criterion(result, gt)
         return verb_loss
 
     def start_log(self):

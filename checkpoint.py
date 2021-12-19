@@ -34,7 +34,6 @@ class Checkpoint():
             f.write('\n')
 
     def save(self, trainer, epoch, is_best=False):
-        print(is_best)
         trainer.model.save(self.dir, is_best=is_best)
         trainer.loss.save(self.dir)
         # trainer.loss.plot_loss(self.dir, epoch)
